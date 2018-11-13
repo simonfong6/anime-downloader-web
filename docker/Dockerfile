@@ -12,3 +12,5 @@ RUN pip3 install flask flask-cors
 RUN pip3 install anime-downloader[cloudflare]
 
 RUN git clone https://github.com/simonfong6/anime-downloader-web
+
+CMD python3 anime-downloader-web/anime_downloader_web/server.py -p 8080
