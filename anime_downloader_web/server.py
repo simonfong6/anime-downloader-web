@@ -13,6 +13,8 @@ app = Flask(__name__)
 
 AnimeClass = None
 
+EXCLUDED_FILE_CHARS = '/\\:*?"<>| '
+
 
 def initiliaze():
     """
@@ -26,6 +28,16 @@ def initiliaze():
     app.config['video'] = 'video'
 
 
+def clean_file_name(file_name):
+    """
+    Removes all the characters not allowed in file names from file name.
+    """
+    file_name_cleaned = None
+    for c in EXCLUDED_FILE_CHARS:
+        file_name_cleaned = file_name.replace(c, '_')
+    return file_name_cleaned
+
+
 @app.route('/')
 def index():
     return redirect(url_for(
@@ -33,11 +45,14 @@ def index():
             file_type=app.config['html'],
             file_name='index.html'))
 
+
 @app.route('/download', methods=['GET', 'POST'])
 def download():
-    anime = NineAnime(
-            'https://www1.9anime.to/watch/your-name-dub.l4yz/n2qm6m',
-            quality='720p')
+    anime_url = 'https://www1.9anime.to/watch/code-geass-lelouch-of-the-rebellion-dub.k3w/k4nnxv'
+    quality = '720p'
+    anime = AnimeClass(
+            anime_url,
+            quality=quality)
     print(anime.title)
 
     for ep in anime:
@@ -47,8 +62,10 @@ def download():
         print(ep.stream_url)  # stream url for the epiosde.
         print(ep.title)  # title from site. Most probably giberrish
 
+    # Download the first episode.
     ep = anime[0]
     print(dir(ep))
+
     ep.download()  # downloads the episode
     return "Download"
 
