@@ -40,10 +40,22 @@ def clean_file_name(file_name):
 
 @app.route('/')
 def index():
+    """
+    Serves main page.
+    """
     return redirect(url_for(
             'get_static_files',
             file_type=app.config['html'],
             file_name='index.html'))
+
+
+@app.route('/static/<file_type>/<file_name>')
+def get_static_files(file_type, file_name):
+    """
+    Serves any static resources.
+    """
+    dir_path = os.path.join(app.config['STATIC'], app.config[file_type])
+    return send_from_directory(dir_path, file_name)
 
 
 @app.route('/download', methods=['GET', 'POST'])
@@ -64,7 +76,6 @@ def download():
 
     # Download the first episode.
     ep = anime[0]
-    print(dir(ep))
 
     ep.download()  # downloads the episode
     return "Download"
